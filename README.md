@@ -13,7 +13,7 @@
 在命令行中输入命令
 
 ```plain
-g++ converter.cpp -o converter -std=c++11 -O2
+g++ converter.cpp -o converter -std=c++17 -O2
 ```
 
 直接运行生成的可执行文件 `converter.exe`（Windows） / `converter`（Linux）即可得到 Hydro 的数据配置文件 `data.yml`。

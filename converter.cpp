@@ -13,13 +13,14 @@
 
 struct subtask {
     int score;
-    int time_limit;
+    int id;
+    double time_limit;
     int memory_limit;
     std::vector<std::pair<std::string, std::string>> data;
 
     subtask() {}
-    subtask(int score, int time_limit, int memory_limit, std::vector<std::pair<std::string, std::string>> data) :
-      score(score), time_limit(time_limit), memory_limit(memory_limit), data(data) {}
+    subtask(int score, int id, int time_limit, int memory_limit, std::vector<std::pair<std::string, std::string>> data) :
+      score(score), id(id), time_limit(time_limit), memory_limit(memory_limit), data(data) {}
 };
 
 int main() {
@@ -39,6 +40,7 @@ int main() {
 
     std::string filename;
     std::vector<subtask> sub;
+    int id = 0;
     for (TiXmlElement *dd = root->FirstChildElement(); dd != NULL; dd = dd->NextSiblingElement()) {
         if (dd->ValueTStr() == "source") {
             filename = dd->Attribute("file");
@@ -52,21 +54,23 @@ int main() {
                 continue;
             }
             int score = atoi(d->Attribute("score"));
-            int time_limit = 0, memory_limit = 0;
+            double time_limit = 0;
+            int memory_limit = 0;
             std::vector<std::pair<std::string, std::string>> data;
             for (TiXmlElement *c = d->FirstChildElement(); c != NULL; c = c->NextSiblingElement()) {
                 if (c->ValueTStr() != "point") {
                     continue;
                 }
                 data.emplace_back(c->Attribute("in"), c->Attribute("out"));
-                time_limit = std::max(time_limit, atoi(c->Attribute("time")));
+                time_limit = std::max(time_limit, atof(c->Attribute("time")));
                 memory_limit = std::max(memory_limit, atoi(c->Attribute("mem")));
             }
             if (data.empty()) {
                 std::cout << "No test cases." << std::endl;
                 return 1;
             }
-            sub.emplace_back(score, time_limit, memory_limit, data);
+            sub.emplace_back(score, id, time_limit, memory_limit, data);
+            id++;
         }
     }
 
@@ -77,17 +81,19 @@ int main() {
 
     fout << "type: default\n";
     fout << "\n";
-    fout << "filename: " << filename << "\n";
-    fout << "\n";
+//    fout << "filename: " << filename << "\n";
+//    fout << "\n";
     fout << "checker_type: default\n";
+    fout << "\n"; 
+    fout << "time: " << sub[0].time_limit << "s\n";
+    fout << "memory: " << sub[0].memory_limit << "m\n";
     fout << "\n";
     fout << "subtasks:\n";
     for (const auto &x : sub) {
         fout << "  - score: " << x.score << "\n";
-        fout << "    time: " << x.time_limit << "s\n";
-        fout << "    memory: " << x.memory_limit << "m\n";
+        fout << "    id: " << x.id << "\n";
         fout << "    cases:\n";
-        for (const auto [in, out] : x.data) {
+        for (const auto &[in, out] : x.data) {
             fout << "      - input: " << in << "\n";
             fout << "        output: " << out << "\n";
         }

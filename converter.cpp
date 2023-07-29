@@ -19,7 +19,7 @@ struct subtask {
     std::vector<std::pair<std::string, std::string>> data;
 
     subtask() {}
-    subtask(int score, int id, int time_limit, int memory_limit, std::vector<std::pair<std::string, std::string>> data) :
+    subtask(int score, int id, double time_limit, int memory_limit, std::vector<std::pair<std::string, std::string>> data) :
       score(score), id(id), time_limit(time_limit), memory_limit(memory_limit), data(data) {}
 };
 
